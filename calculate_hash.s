@@ -1,65 +1,70 @@
-.data
-    str:    .asciz ""  // Replace with your input string
-    hash:   .word 0                    // Initialize the hash to 0
-
+.global compute_hash
 .text
-.global _start
 
-_start:
-    ldr r0, =str        // Load the address of the string
-    ldr r1, =hash       // Load the address of the hash
-    bl calculate_hash   // Call the hash calculation function
+compute_hash:
+    // Input: R0 points to the null-terminated input string
+    // Output: R0 contains the computed hash value
 
-    // Exit the program
-    mov r7, #1          // Exit syscall
-    swi 0
+    mov r1, #0          // Initialize the hash value to zero
 
-calculate_hash:
-    // Initialize registers
-    mov r2, #0          // Initialize the hash accumulator
-    mov r3, #0          // Initialize the character index
+.loop:
+    ldrb r2, [r0], #1   // Load the next character(byte) from the string
+    cmp r2, #0          // Check if it's the null terminator
+    beq .done           // If yes, exit the loop
 
-hash_loop:
-    ldrb r4, [r0, r3]   // Load the next character from the string
-    cmp r4, #0          // Check if it's the null terminator (end of string)
-    beq hash_done       // If yes, exit the loop
+    // Check if it's an uppercase letter
+    cmp r2, #'A' // Check ASCII values
+    blt .lowercase  // Branch less than - (negative flag set in cspr) - Char = Lowercase
+    cmp r2, #'Z' 
+    bgt .numeric // ASCII value greater than that of Z - Char = Numeric
+	// All checks passed - Letter = Uppercase
 
-    // Check if the character is an uppercase letter
-    cmp r4, #'A'
-    blt lowercase_check
-    cmp r4, #'Z'
-    bgt lowercase_check
+    // Add the corresponding number for uppercase letters
+    sub r2, r2, #'A'  // To calculate the index (0 to 25), we subtract the ASCII value of 'A' (65) from the character value that is being checked (e.g for K (ASCII : 75) index = 75 -65 = 10th position in table)
+	ldr r3, =table // Point r3 to the start of the table (BASE ADDRESS)
+	ldr r2, [r3, r2, LSL #2]  // Load the checked letter's corresponding number using the table's index | Each entry in table occupies 4 bits (Shift left * 2), so: Effective Address = Base Address (table) + (Index * 4) 
+    add r1, r1, r2 // Add value to r1 (Adding to the total hash sum)
+    b .loop // Go back to loop to load next char
 
-    // Add the corresponding number to the hash
-    sub r4, r4, #'A'    // Convert to index (A=0, B=1, ..., Z=25)
-    add r2, r2, r4      // Add to the hash
+.lowercase:
+    // Subtract the corresponding number for lowercase letters
+    cmp r2, #'a'
+    blt .numeric // ASCII value less than that of a - Char = Numeric
+    cmp r2, #'z'
+    bgt .loop // ASCII value greater than that of z - Char = Numeric
+    sub r2, r2, #'a'
+    ldr r3, =table
+    ldr r2, [r3, r2, LSL #2]  // Load the corresponding number | Same logic as above 
+    sub r1, r1, r2 // Now subtract
+    b .loop // Go back to loop to load next char
 
-lowercase_check:
-    // Check if the character is a lowercase letter
-    cmp r4, #'a'
-    blt numeric_check
-    cmp r4, #'z'
-    bgt numeric_check
+.numeric:
+    // Add the value of the numeric digit
+    cmp r2, #'0' // 
+    blt .loop
+    cmp r2, #'9'
+    bgt .loop
+    sub r2, r2, #'0'
+    add r1, r1, r2
+    b .loop
 
-    // Subtract the corresponding number from the hash
-    sub r4, r4, #'a'    // Convert to index (a=0, b=1, ..., z=25)
-    sub r2, r2, r4      // Subtract from the hash
+.done:
+    // Sum the digits until a single-digit value is obtained
+    sum_digits:
+        cmp r1, #9
+        ble .end_sum
+        mov r2, #0
+    .digit_loop:
+        add r2, r2, r1, LSR #1
+        and r1, r1, #1
+        cmp r1, #0
+        bne .digit_loop
+        mov r1, r2
+        b sum_digits
+    .end_sum:
+	
+	bx lr	// Return from the function
 
-numeric_check:
-    // Check if the character is a numeric digit
-    cmp r4, #'0'
-    blt next_char
-    cmp r4, #'9'
-    bgt next_char
-
-    // Add the numeric value to the hash
-    sub r4, r4, #'0'    // Convert to integer value (0=0, 1=1, ..., 9=9)
-    add r2, r2, r4      // Add to the hash
-
-next_char:
-    add r3, r3, #1      // Move to the next character
-    b hash_loop
-
-hash_done:
-    str r2, [r1]        // Store the final hash value
-    bx lr               // Return from the function
+.data
+table:
+	.word 10, 42, 12, 21, 7, 5, 67, 48, 69, 2, 36, 3, 19, 1, 14, 51, 71, 8, 26, 54, 75, 15, 6, 59, 13, 25
