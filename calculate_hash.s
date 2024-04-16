@@ -10,7 +10,7 @@ _start:
     ldr r1, =hash       // Load the address of the hash
     bl calculate_hash   // Call the hash calculation function
 
-    // Exit the program (you can replace this with your desired behavior)
+    // Exit the program
     mov r7, #1          // Exit syscall
     swi 0
 
