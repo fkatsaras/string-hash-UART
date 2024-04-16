@@ -8,6 +8,7 @@
 
 // Function prototypes 
 void uart_rx_isr(uint8_t rx);
+extern int sum_n(int n);
 
 // Function prototypes for assembly routines
 extern int calculate_hash(char *input); // Assembly routine to calculate hash

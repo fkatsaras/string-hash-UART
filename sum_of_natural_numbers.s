@@ -1,16 +1,18 @@
 .global sum_n
-.type	sum_n,%function
-
 
 sum_n:
 	.fnstart
-	add r1, r1, r0       //r1 = r1 + r0
-    cmp r0, #0            //Compare n with 0
-    ble end_recursion     //If n <= 0, end recursion
+    mov r4, r0          // Move n into r4
 
-    sub r0, r0, #1        // r0 = r0 - 1
-    bl sum_n  			  // Branch with link: Recursive call to sum_of_natural_numbers - converge towards base case
+    // Calculate the sum
+    mov r1, r4          // Move n into r1
+    add r1, #1          // Add 1 to n
+    mul r4, r1          // Multiply n by (n+1) - n*(n + 1)
+	lsr r4, r4, #1		// LSR r4, divide by 2 - n*(n-1)/2
 
-end_recursion:
-    pop {r1, pc}          //Restore registers and return
+    // Return the result
+    mov r0, r4          // Move the result to r0
+
+    // Function epilogue
+    bx lr
 	.fnend
