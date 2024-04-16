@@ -394,6 +394,11 @@
               <FileType>1</FileType>
               <FilePath>.\main.c</FilePath>
             </File>
+            <File>
+              <FileName>calculate_hash.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>.\calculate_hash.s</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

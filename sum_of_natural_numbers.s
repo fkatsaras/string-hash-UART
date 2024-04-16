@@ -9,7 +9,7 @@ sum_n:
     ble end_recursion     //If n <= 0, end recursion
 
     sub r0, r0, #1        // r0 = r0 - 1
-    bl sum_n  			  // Recursive call to sum_of_natural_numbers
+    bl sum_n  			  // Branch with link: Recursive call to sum_of_natural_numbers - converge towards base case
 
 end_recursion:
     pop {r1, pc}          //Restore registers and return

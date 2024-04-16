@@ -80,7 +80,7 @@ int main() {
     strcpy(input, "sAr, PE 2!W");
 
     // Call the assembly routine to calculate the hash
-		char hash[BUFF_SIZE];
+    char hash[BUFF_SIZE];
     hash = calculate_hash(input);
 
     // Print the calculated hash
