@@ -49,19 +49,6 @@ compute_hash:
     b .loop
 
 .done:
-    // Sum the digits until a single-digit value is obtained
-    sum_digits:
-        cmp r1, #9
-        ble .end_sum
-        mov r2, #0
-    .digit_loop:
-        add r2, r2, r1, LSR #1
-        and r1, r1, #1
-        cmp r1, #0
-        bne .digit_loop
-        mov r1, r2
-        b sum_digits
-    .end_sum:
 	
 	bx lr	// Return from the function
 
