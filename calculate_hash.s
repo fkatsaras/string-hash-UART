@@ -20,8 +20,9 @@ compute_hash:
 	// All checks passed - Letter = Uppercase
 
     // Add the corresponding number for uppercase letters
-    sub r2, r2, #'A'  // To calculate the index (0 to 25), we subtract the ASCII value of 'A' (65) from the character value that is being checked (e.g for K (ASCII : 75) index = 75 -65 = 10th position in table)
-	ldr r3, =table // Point r3 to the start of the table (BASE ADDRESS)
+    sub r2, r2, #'A'  // r2 = index | table[index] = char hash number | To calculate the index (0 to 25), we subtract the ASCII value of 'A' (65) from the character value that is being checked (e.g for K (ASCII : 75) index = 75 -65 = 10th position in table)
+	ldr r3, =table // r3 = &table[index] | Point r3 to the start of the table (BASE ADDRESS)
+    // ldr r4, r2, LSL #2                 //r4 = index] Load the Index value in r4
 	ldr r2, [r3, r2, LSL #2]  // Load the checked letter's corresponding number using the table's index | Each entry in table occupies 4 bits (Shift left * 2), so: Effective Address = Base Address (table) + (Index * 4) 
     add r1, r1, r2 // Add value to r1 (Adding to the total hash sum)
     b .loop // Go back to loop to load next char
@@ -49,7 +50,7 @@ compute_hash:
     b .loop
 
 .done:
-	
+	mov r0, r1 // Move result into r0
 	bx lr	// Return from the function
 
 .data
