@@ -33,7 +33,7 @@ int main () {
 	
 	int result = sum_n(hash_value);
 	
-	printf("Hash of %s\n is %d\n",input,hash_value);
+	printf("Hash of %s is %d\n",input,hash_value);
 	
 	printf("Sum of numbers S%d = %d\n",hash_value,result);
 	
