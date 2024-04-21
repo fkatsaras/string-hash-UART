@@ -46,29 +46,7 @@ compute_hash:
     add r1, r1, r2
     b .loop
 	
-
 .done:
-// // Reduce to a single digit if necessary
-//reduce:
-//    mov r2, r1          // Copy the hash value to r2
-//    cmp r2, #10         // Check if the value is greater than or equal to 10
-//    blo .done_reduce    // If not, we are done
-
-    // Sum the digits of the number
-//    mov r1, #0          // Reset r1 to zero for the digit sum
-//.sum_digits:
-//    mov r3, r2, lsr #1  // Divide r2 by 10 (r3 = r2 / 10)
-//    add r1, r1, r2, lsr #1  // Add the last digit of r2 to r1
-//    and r2, r3, #15     // Extract the last digit of r2
-//    cmp r3, #0          // Check if r3 is zero
-//    bne .sum_digits     // If not, continue summing digits
-
-//.done_reduce:
-//	// Take the absolute value of r1
-//	tst r1, r1          // Test if r1 is negative
-//	it mi               // Conditionally execute following instruction only if negative
-//	rsbmi r1, r1, #0    // If negative, take the absolute value
-
     // Return the result
     mov r0, r1          // Move the result to r0
     bx lr               // Return from the function
